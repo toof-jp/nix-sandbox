@@ -3,7 +3,7 @@ VM_IP := 192.168.122.69
 ISO_DIR := $(CURDIR)/iso
 BOOT_DIR := /var/lib/libvirt/boot
 
-.PHONY: create connect rescue ssh deploy update
+.PHONY: create connect rescue ssh deploy update sakura-iso
 
 create:
 	ISO_PATH="$$(find $(ISO_DIR) -maxdepth 1 -name '*.iso' -type f | sort | tail -n 1)"; \
@@ -67,3 +67,6 @@ deploy:
 
 update:
 	nix flake update
+
+sakura-iso:
+	nix build .#nixosConfigurations.sakura-installer.config.system.build.isoImage
