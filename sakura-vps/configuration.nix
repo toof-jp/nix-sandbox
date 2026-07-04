@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ../modules/kubernetes-node.nix
+    ./network.nix
   ];
 
   nixpkgs.config.allowUnfreePredicate = pkg:
@@ -14,9 +15,6 @@
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/vda";
 
-  # Sakura's VPS network hands out the public IP over DHCP; no static
-  # networking is required.
-  networking.networkmanager.enable = true;
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
 
