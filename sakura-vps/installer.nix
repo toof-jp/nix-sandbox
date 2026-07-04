@@ -4,6 +4,10 @@ let
   sakuraInstall = pkgs.writeShellScriptBin "sakura-install" ''
     set -euo pipefail
 
+    if [ "$(id -u)" -ne 0 ]; then
+      exec sudo "$0" "$@"
+    fi
+
     echo "This will ERASE /dev/vda and install NixOS (sakura-vps). Type YES to continue:"
     read -r confirm
     if [ "$confirm" != "YES" ]; then
