@@ -36,7 +36,14 @@
     in
     {
       nixosConfigurations.nixos-test = withHomeManager ./nixos-test/configuration.nix;
-      nixosConfigurations.sakura-vps = withHomeManager ./sakura-vps/configuration.nix;
+
+      # sakura-vps is a k8s node, not a dev box — no home-manager dotfiles
+      # (herdr/claude-code/codex/neovim are heavy to build/fetch on a small
+      # VPS). `vim` is already in its environment.systemPackages.
+      nixosConfigurations.sakura-vps = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [ ./sakura-vps/configuration.nix ];
+      };
 
       # `nix build .#nixosConfigurations.sakura-installer.config.system.build.isoImage`
       # produces the custom installer ISO to upload/mount via Sakura's VPS
