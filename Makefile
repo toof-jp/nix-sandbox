@@ -3,7 +3,7 @@ VM_IP := 192.168.122.69
 ISO_DIR := $(CURDIR)/iso
 BOOT_DIR := /var/lib/libvirt/boot
 
-.PHONY: create connect rescue ssh deploy
+.PHONY: create connect rescue ssh deploy update
 
 create:
 	ISO_PATH="$$(find $(ISO_DIR) -maxdepth 1 -name '*.iso' -type f | sort | tail -n 1)"; \
@@ -64,3 +64,6 @@ ssh:
 
 deploy:
 	nix run nixpkgs#nixos-rebuild -- switch --flake .#$(VM_NAME) --target-host root@$(VM_IP) --build-host localhost
+
+update:
+	nix flake update
