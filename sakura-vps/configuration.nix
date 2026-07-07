@@ -15,15 +15,19 @@
   boot.loader.grub.enable = true;
   boot.loader.grub.device = "/dev/vda";
 
+  networking.hostName = "sakura-vps";
   networking.firewall.enable = true;
   networking.firewall.allowedTCPPorts = [ 22 ];
 
-  # Persistent swap to avoid OOM under memory pressure (kubeadm/etcd are
-  # not light). Mirrors the temporary swapfile created by hand before
-  # `nixos-install` (see README) so the VPS still has swap after reboot.
-  swapDevices = [
-    { device = "/var/lib/swapfile"; size = 2048; }
-  ];
+  kubernetesNode.nodeIP = "100.117.158.100";
+
+  # No persistent swap: kubelet refuses to start with swap on unless it's
+  # explicitly configured for cgroup v2 (NodeSwap feature gate +
+  # memorySwap.swapBehavior), which we don't set up. The temporary
+  # swapfile created by `sakura-install` before `nixos-install` (to avoid
+  # OOM while building/copying the closure) is only used during install
+  # and isn't declared here, so it's gone on first boot of this config.
+  swapDevices = [ ];
 
   environment.systemPackages = with pkgs; [ vim git tmux wget htop ];
 

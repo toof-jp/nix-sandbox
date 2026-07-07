@@ -14,4 +14,11 @@
   ];
   networking.defaultGateway = "153.126.160.1";
   networking.nameservers = [ "133.242.0.3" "210.188.224.10" ];
+
+  # kubeadm inherits the cluster-wide kubelet config, which points
+  # resolvConf at /run/systemd/resolve/resolv.conf — that file only
+  # exists when systemd-resolved is running, and disabling
+  # NetworkManager above took resolved down with it. Without this every
+  # pod sandbox creation fails with "no such file or directory".
+  services.resolved.enable = true;
 }

@@ -13,8 +13,11 @@
   boot.loader.efi.canTouchEfiVariables = true;
   boot.kernelParams = [ "console=tty0" "console=ttyS0,115200n8" ];
 
+  networking.hostName = "nixos-test";
   networking.networkmanager.enable = true;
   networking.firewall.enable = false;
+
+  kubernetesNode.nodeIP = "100.118.178.21";
 
   environment.systemPackages = [ pkgs.vim pkgs.htop ];
 
