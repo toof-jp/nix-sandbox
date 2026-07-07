@@ -25,6 +25,9 @@ let
     parted /dev/vda -- set 1 bios_grub on
     parted /dev/vda -- mkpart primary ext4 2MiB 100%
     mkfs.ext4 -L nixos /dev/vda2
+    # mkfs and the by-label symlink race: udev may not have processed the
+    # new label yet when mount runs (seen on Vultr: "Can't lookup blockdev").
+    udevadm settle
     mount /dev/disk/by-label/nixos /mnt
 
     mkdir -p /mnt/var/lib
