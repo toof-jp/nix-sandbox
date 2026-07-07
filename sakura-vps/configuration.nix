@@ -31,6 +31,19 @@
 
   environment.systemPackages = with pkgs; [ vim git tmux wget htop ];
 
+  # Longhorn stores replicas on this node (/var/lib/longhorn). Its v1 data
+  # engine attaches volumes over iSCSI, so iscsid must run on the host.
+  services.openiscsi = {
+    enable = true;
+    name = "iqn.2016-04.com.open-iscsi:${config.networking.hostName}";
+  };
+  # longhorn-manager nsenters the host mount namespace and invokes iscsiadm
+  # etc. by absolute-ish PATH lookup (/usr/local/bin, /usr/bin, ...), none of
+  # which exist on NixOS — expose the system profile there.
+  systemd.tmpfiles.rules = [
+    "L+ /usr/local/bin - - - - /run/current-system/sw/bin/"
+  ];
+
   system.stateVersion = "26.05";
 
   services.openssh.enable = true;
