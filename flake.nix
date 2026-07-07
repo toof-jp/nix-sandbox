@@ -37,20 +37,31 @@
     {
       nixosConfigurations.nixos-test = withHomeManager ./nixos-test/configuration.nix;
 
-      # sakura-vps is a k8s node, not a dev box — no home-manager dotfiles
+      # The VPS hosts are k8s nodes, not dev boxes — no home-manager dotfiles
       # (herdr/claude-code/codex/neovim are heavy to build/fetch on a small
-      # VPS). `vim` is already in its environment.systemPackages.
+      # VPS). `vim` is already in their environment.systemPackages.
       nixosConfigurations.sakura-vps = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [ ./sakura-vps/configuration.nix ];
       };
 
-      # `nix build .#nixosConfigurations.sakura-installer.config.system.build.isoImage`
-      # produces the custom installer ISO to upload/mount via Sakura's VPS
-      # control panel. No home-manager here — it's a throwaway live env.
+      nixosConfigurations.vultr-vps = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [ ./vultr-vps/configuration.nix ];
+      };
+
+      # `make sakura-iso` / `make vultr-iso` build the custom installer ISOs
+      # to upload/mount via each provider's control panel (or, for Vultr,
+      # vultr_iso_private in toof-jp/infra terraform). No home-manager here —
+      # they're throwaway live envs.
       nixosConfigurations.sakura-installer = nixpkgs.lib.nixosSystem {
         system = "x86_64-linux";
         modules = [ ./sakura-vps/installer.nix ];
+      };
+
+      nixosConfigurations.vultr-installer = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [ ./vultr-vps/installer.nix ];
       };
 
       homeConfigurations.toof = home-manager.lib.homeManagerConfiguration {
