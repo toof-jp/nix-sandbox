@@ -11,6 +11,15 @@
     '';
   };
 
+  # Reservations, eviction thresholds and other memory-sensitive flags
+  # differ between the 4GB VPSs and the 1GB oci-vps, so keep them out
+  # of this shared module and let each host add its own.
+  options.kubernetesNode.extraKubeletArgs = lib.mkOption {
+    type = lib.types.listOf lib.types.str;
+    default = [ ];
+    description = "Extra CLI flags appended to the kubelet ExecStart.";
+  };
+
   config = {
     boot.kernelModules = [ "overlay" "br_netfilter" ];
     boot.kernel.sysctl = {
@@ -42,7 +51,14 @@
       after = [ "containerd.service" ];
       path = [ pkgs.kubernetes pkgs.iproute2 pkgs.ethtool pkgs.socat pkgs.conntrack-tools pkgs.util-linux ];
       serviceConfig = {
-        ExecStart = "${pkgs.kubernetes}/bin/kubelet --bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf --kubeconfig=/etc/kubernetes/kubelet.conf --config=/var/lib/kubelet/config.yaml --container-runtime-endpoint=unix:///run/containerd/containerd.sock --node-ip=${config.kubernetesNode.nodeIP}";
+        ExecStart = lib.concatStringsSep " " ([
+          "${pkgs.kubernetes}/bin/kubelet"
+          "--bootstrap-kubeconfig=/etc/kubernetes/bootstrap-kubelet.conf"
+          "--kubeconfig=/etc/kubernetes/kubelet.conf"
+          "--config=/var/lib/kubelet/config.yaml"
+          "--container-runtime-endpoint=unix:///run/containerd/containerd.sock"
+          "--node-ip=${config.kubernetesNode.nodeIP}"
+        ] ++ config.kubernetesNode.extraKubeletArgs);
         Restart = "always";
         StartLimitIntervalSec = 0;
       };
