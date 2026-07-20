@@ -5,6 +5,7 @@
     ./hardware-configuration.nix
     ../modules/k8s-vps.nix
     ./network.nix
+    ./nemousu-redirect.nix
   ];
 
   networking.hostName = "sakura-vps";
