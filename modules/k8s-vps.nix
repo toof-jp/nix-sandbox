@@ -1,8 +1,9 @@
 { config, lib, pkgs, ... }:
 
-# Shared config for cheap-VPS k8s nodes (sakura-vps, vultr-vps).
-# Host-specific bits stay in each host dir: hostname, kubernetesNode.nodeIP,
-# network.nix, hardware-configuration.nix.
+# Shared config for cheap-VPS k8s nodes (sakura-vps, vultr-vps, oci-vps,
+# oci-vps-2). Host-specific bits stay in each host dir: hostname,
+# kubernetesNode.nodeIP, network.nix, hardware-configuration.nix.
+# OCI hosts override boot.loader.grub for EFI removable install.
 {
   imports = [ ./kubernetes-node.nix ];
 

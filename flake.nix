@@ -57,6 +57,11 @@
         modules = [ ./oci-vps/configuration.nix ];
       };
 
+      nixosConfigurations.oci-vps-2 = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        modules = [ ./oci-vps-2/configuration.nix ];
+      };
+
       # `make sakura-iso` / `make vultr-iso` build the custom installer ISOs
       # to upload/mount via each provider's control panel (or, for Vultr,
       # vultr_iso_private in toof-jp/infra terraform). No home-manager here —
